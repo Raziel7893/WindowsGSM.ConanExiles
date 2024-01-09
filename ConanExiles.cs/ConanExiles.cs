@@ -16,8 +16,8 @@ namespace WindowsGSM.Plugins
         {
             name = "WindowsGSM.ConanExiles", // WindowsGSM.XXXX
             author = "Soul",
-            description = "\U0001f9e9 A plugin version of the Vintage Story Dedicated server for WindowsGSM",
-            version = "1.0",
+            description = "\U0001f9e9 A plugin version of the Conan Exiles Dedicated server for WindowsGSM",
+            version = "1.1",
             url = "https://github.com/Soulflare3/WindowsGSM.ConanExiles", // Github repository link (Best practice)
             color = "#7a0101" // Color Hex
         };
