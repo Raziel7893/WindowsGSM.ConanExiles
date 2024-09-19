@@ -1,4 +1,7 @@
 ﻿# WindowsGSM.ConanExiles
+![GitHub Release](https://img.shields.io/github/v/release/Soulflare3/WindowsGSM.ConanExiles)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Soulflare3/WindowsGSM.ConanExiles/total)
+
 🧩 A plugin version of the Conan Exiles Dedicated server for WindowsGSM
 
 ## Requirements
