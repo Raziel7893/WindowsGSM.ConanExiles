@@ -23,9 +23,7 @@ namespace WindowsGSM.Plugins
         };
 
         // - Standard Constructor and properties
-        public ConanExiles(ServerConfig serverData) : base(serverData) => base.serverData = _serverData = serverData;
-        private readonly ServerConfig _serverData;
-
+        public ConanExiles(ServerConfig serverData) : base(serverData) => base.serverData =serverData;
         // - Settings properties for SteamCMD installer
         public override bool loginAnonymous => true;
         public override string AppId => "443030";
@@ -50,30 +48,30 @@ namespace WindowsGSM.Plugins
         public async void CreateServerCFG()
         {
             //Download Engine.ini
-            string configPath = Functions.ServerPath.GetServersServerFiles(_serverData.ServerID, @"ConanSandbox\Saved\Config\WindowsServer\Engine.ini");
+            string configPath = Functions.ServerPath.GetServersServerFiles(serverData.ServerID, @"ConanSandbox\Saved\Config\WindowsServer\Engine.ini");
             if (await Functions.Github.DownloadGameServerConfig(configPath, FullName))
             {
                 string configText = File.ReadAllText(configPath);
-                configText = configText.Replace("{{ServerName}}", _serverData.ServerName);
-                configText = configText.Replace("{{ServerPassword}}", _serverData.GetRCONPassword());
+                configText = configText.Replace("{{ServerName}}", serverData.ServerName);
+                configText = configText.Replace("{{ServerPassword}}", serverData.GetRCONPassword());
                 File.WriteAllText(configPath, configText);
             }
         }
 
         public async Task<Process> Start()
         {
-            string shipExePath = Functions.ServerPath.GetServersServerFiles(_serverData.ServerID, StartPath);
+            string shipExePath = Functions.ServerPath.GetServersServerFiles(serverData.ServerID, StartPath);
             if (!File.Exists(shipExePath))
             {
                 Error = $"{Path.GetFileName(shipExePath)} not found ({shipExePath})";
                 return null;
             }
 
-            string param = string.IsNullOrWhiteSpace(_serverData.ServerIP) ? string.Empty : $" -MultiHome={_serverData.ServerIP}";
-            param += string.IsNullOrWhiteSpace(_serverData.ServerPort) ? string.Empty : $" -Port={_serverData.ServerPort}";
-            param += string.IsNullOrWhiteSpace(_serverData.ServerQueryPort) ? string.Empty : $" -QueryPort={_serverData.ServerQueryPort}";
-            param += string.IsNullOrWhiteSpace(_serverData.ServerMaxPlayer) ? string.Empty : $" -MaxPlayers={_serverData.ServerMaxPlayer}";
-            param += $" {_serverData.ServerParam}" + (!AllowsEmbedConsole ? " -log" : string.Empty);
+            string param = string.IsNullOrWhiteSpace(serverData.ServerIP) ? string.Empty : $" -MultiHome={serverData.ServerIP}";
+            param += string.IsNullOrWhiteSpace(serverData.ServerPort) ? string.Empty : $" -Port={serverData.ServerPort}";
+            param += string.IsNullOrWhiteSpace(serverData.ServerQueryPort) ? string.Empty : $" -QueryPort={serverData.ServerQueryPort}";
+            param += string.IsNullOrWhiteSpace(serverData.ServerMaxPlayer) ? string.Empty : $" -MaxPlayers={serverData.ServerMaxPlayer}";
+            param += $" {serverData.ServerParam}" + (!serverData.EmbedConsole ? " -log" : string.Empty);
 
             Process p;
             if (!AllowsEmbedConsole)
@@ -107,7 +105,7 @@ namespace WindowsGSM.Plugins
                     },
                     EnableRaisingEvents = true
                 };
-                var serverConsole = new Functions.ServerConsole(_serverData.ServerID);
+                var serverConsole = new Functions.ServerConsole(serverData.ServerID);
                 p.OutputDataReceived += serverConsole.AddOutput;
                 p.ErrorDataReceived += serverConsole.AddOutput;
                 p.Start();
