@@ -4,9 +4,10 @@
 
 🧩 A plugin version of the Conan Exiles Dedicated server for WindowsGSM
 
-## Mods (only steammods possible)
+## Mod AutoUpdate (only steammods possible)
 - Just copy your ModList.txt to the ServerFiles root (click Browse => serverfiles) and click update.
-- wgsm will try to load all the mods from steam and copy them into the Mods folder.
+- WGSM will try to load all the mods from steam and copy them into the Mods folder.
+- If you need to change the order: edit that file. the Plugin will recreate the ConanExilesSandbox/Mods/Modlist.txt after each update
 - WGSM Software will freetze as long as the download takes, so don'T freak out. Will try to fix that sometime.
 
 ### Official Documentation
