@@ -6,6 +6,7 @@ using WindowsGSM.Functions;
 using WindowsGSM.GameServer.Engine;
 using WindowsGSM.GameServer.Query;
 using System.IO;
+using System.Collections.Generic;
 
 namespace WindowsGSM.Plugins
 {
@@ -17,7 +18,7 @@ namespace WindowsGSM.Plugins
             name = "WindowsGSM.ConanExiles", // WindowsGSM.XXXX
             author = "Soul",
             description = "\U0001f9e9 A plugin version of the Conan Exiles Dedicated server for WindowsGSM",
-            version = "1.1",
+            version = "1.2",
             url = "https://github.com/Soulflare3/WindowsGSM.ConanExiles", // Github repository link (Best practice)
             color = "#7a0101" // Color Hex
         };
@@ -27,6 +28,8 @@ namespace WindowsGSM.Plugins
         // - Settings properties for SteamCMD installer
         public override bool loginAnonymous => true;
         public override string AppId => "443030";
+        public string GameId => "440900";
+        public string ModListFile => "ModList.txt";
 
         // - Game server Fixed variables
         public override string StartPath => @"ConanSandbox\Binaries\Win64\ConanSandboxServer-Win64-Shipping.exe";
@@ -43,6 +46,12 @@ namespace WindowsGSM.Plugins
         public string Maxplayers = "40";
         public string Additional = "";
 
+        public struct ModInfo
+        {
+            public string AppId;
+            public string ModId;
+            public string FileName;
+        }
 
         // - Create a default cfg for the game server after installation
         public async void CreateServerCFG()
@@ -116,6 +125,15 @@ namespace WindowsGSM.Plugins
             return p;
         }
 
+        public async Task<Process> Update(bool validate = false, string custom = null)
+        {
+            UpdateMods();
+            var (p, error) = await Installer.SteamCMD.UpdateEx(serverData.ServerID, AppId, validate, custom: custom, loginAnonymous: loginAnonymous);
+
+            Error = error;
+            return p;
+        }
+
         public async Task Stop(Process p)
         {
             await Task.Run(() =>
@@ -130,6 +148,97 @@ namespace WindowsGSM.Plugins
                     Functions.ServerConsole.SendWaitToMainWindow("^c");
                 }
             });
+        }
+
+        private void UpdateMods()
+        {
+            if (File.Exists(Functions.ServerPath.GetServersServerFiles(serverData.ServerID, ModListFile)))
+            {
+                var modDestFolder = Functions.ServerPath.GetServersServerFiles(serverData.ServerID, "ConanSandbox", "Mods");
+                Directory.CreateDirectory(modDestFolder);
+
+                string[] lines = File.ReadAllLines(Functions.ServerPath.GetServersServerFiles(serverData.ServerID, ModListFile));
+                List<ModInfo> mods = new List<ModInfo>();
+
+                foreach (string line in lines)
+                {
+                    string tmpLine = line.Replace("\\", "/");
+                    var elements = tmpLine.Split('/');
+                    if (elements.Length > 3)
+                    {
+                        mods.Add(new ModInfo { AppId = elements[elements.Length - 3], ModId = elements[elements.Length - 2], FileName = elements[elements.Length - 1] });
+                    }
+                }
+                DownloadMods(mods);
+                var modlistContent = new StringBuilder();
+                foreach (ModInfo mod in mods)
+                {
+                    modlistContent.AppendLine($"*{mod.FileName}");
+                }
+
+                CopyModPaks(modDestFolder);
+
+                File.WriteAllText($"{modDestFolder}\\{ModListFile}", modlistContent.ToString());
+            }
+        }
+
+        private void CopyModPaks(string destination)
+        {
+            string sourcePath = Functions.ServerPath.GetServersServerFiles(serverData.ServerID, "steamapps\\workshop\\content", GameId);
+            if (!Directory.Exists(sourcePath))
+                return;
+            var files = Directory.GetFiles(sourcePath, "*.pak", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                string dest = Path.Combine(destination, Path.GetFileName(file));
+                //only copy if changed
+                if (new FileInfo(file).CreationTimeUtc > new FileInfo(dest).CreationTimeUtc)
+                    File.Copy(file, dest);
+            }
+        }
+
+        private void DownloadMods(List<ModInfo> mods)
+        {
+            string _exeFile = "steamcmd.exe";
+            string _installPath = ServerPath.GetBin("steamcmd");
+
+            string exePath = Path.Combine(_installPath, _exeFile);
+
+            if (!File.Exists(exePath))
+            {
+                Error = $"SteamCMD not available, break up";
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder($"+force_install_dir \"{Functions.ServerPath.GetServersServerFiles(serverData.ServerID)}\" +login anonymous");
+            foreach (var mod in mods)
+            {
+                if (!string.IsNullOrEmpty(mod.AppId) && !string.IsNullOrEmpty(mod.ModId) && !string.IsNullOrEmpty(mod.FileName))
+                    sb.Append($" +workshop_download_item {mod.AppId} {mod.ModId}");
+            }
+
+            sb.Append($" +quit");
+
+            Process p = new Process
+            {
+                StartInfo =
+                {
+                    WorkingDirectory = _installPath,
+                    FileName = exePath,
+                    Arguments = sb.ToString(),
+                    WindowStyle = ProcessWindowStyle.Minimized,
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    StandardOutputEncoding = Encoding.UTF8,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                },
+                EnableRaisingEvents = true
+            };
+            p.Start();
+            p.WaitForExit();
+            return;
         }
     }
 }

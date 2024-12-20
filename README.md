@@ -4,6 +4,12 @@
 
 🧩 A plugin version of the Conan Exiles Dedicated server for WindowsGSM
 
+## Mods (only steammods possible)
+- Just copy your ModList.txt to the ServerFiles root (click Browse => serverfiles) and click update.
+- wgsm will try to load all the mods from steam and copy them into the Mods folder.
+- WGSM Software will freetze as long as the download takes, so don'T freak out. Will try to fix that sometime.
+
+
 ## Requirements
 [WindowsGSM](https://github.com/WindowsGSM/WindowsGSM) >= 1.21.0
 
