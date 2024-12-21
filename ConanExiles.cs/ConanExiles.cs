@@ -176,13 +176,13 @@ namespace WindowsGSM.Plugins
                     modlistContent.AppendLine($"*{mod.FileName}");
                 }
 
-                CopyModPaks(modDestFolder);
+                await CopyModPaksAsync(modDestFolder);
 
                 File.WriteAllText($"{modDestFolder}\\{ModListFile}", modlistContent.ToString());
             }
         }
 
-        private void CopyModPaks(string destination)
+        private async Task CopyModPaksAsync(string destination)
         {
             string sourcePath = Functions.ServerPath.GetServersServerFiles(serverData.ServerID, "steamapps\\workshop\\content", GameId);
             if (!Directory.Exists(sourcePath))
@@ -193,7 +193,7 @@ namespace WindowsGSM.Plugins
                 string dest = Path.Combine(destination, Path.GetFileName(file));
                 //only copy if changed
                 if (new FileInfo(file).CreationTimeUtc > new FileInfo(dest).CreationTimeUtc)
-                    File.Copy(file, dest);
+                    await CopyFileAsync(file, dest);
             }
         }
 
@@ -236,9 +236,37 @@ namespace WindowsGSM.Plugins
                 },
                 EnableRaisingEvents = true
             };
-            p.Start();
-            p.WaitForExit();
-            return;
+
+            await RunProcessAsync(p);
         }
+
+        static Task<int> RunProcessAsync(Process p)
+        {
+            var tcs = new TaskCompletionSource<int>();
+
+            p.EnableRaisingEvents = true;
+
+            p.Exited += (sender, args) =>
+            {
+                tcs.SetResult(p.ExitCode);
+                p.Dispose();
+            };
+
+            p.Start();
+
+            return tcs.Task;
+        }
+
+        public async Task CopyFileAsync(string sourcePath, string destinationPath)
+        {
+            using (Stream source = File.Open(sourcePath, FileMode.Open))
+            {
+                using (Stream destination = File.Create(destinationPath))
+                {
+                    await source.CopyToAsync(destination);
+                }
+            }
+        }
+
     }
 }
