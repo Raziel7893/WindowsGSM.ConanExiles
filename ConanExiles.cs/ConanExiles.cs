@@ -16,7 +16,7 @@ namespace WindowsGSM.Plugins
         public Plugin Plugin = new Plugin
         {
             name = "WindowsGSM.ConanExiles", // WindowsGSM.XXXX
-            author = "Soul",
+            author = "Soul", //moddownload by raziel7893
             description = "\U0001f9e9 A plugin version of the Conan Exiles Dedicated server for WindowsGSM",
             version = "1.2",
             url = "https://github.com/Soulflare3/WindowsGSM.ConanExiles", // Github repository link (Best practice)
@@ -24,7 +24,7 @@ namespace WindowsGSM.Plugins
         };
 
         // - Standard Constructor and properties
-        public ConanExiles(ServerConfig serverData) : base(serverData) => base.serverData =serverData;
+        public ConanExiles(ServerConfig serverData) : base(serverData) => base.serverData = serverData;
         // - Settings properties for SteamCMD installer
         public override bool loginAnonymous => true;
         public override string AppId => "443030";
@@ -125,9 +125,9 @@ namespace WindowsGSM.Plugins
             return p;
         }
 
-        public async Task<Process> Update(bool validate = false, string custom = null)
+        public new async Task<Process> Update(bool validate = false, string custom = null)
         {
-            UpdateMods();
+            await UpdateMods();
             var (p, error) = await Installer.SteamCMD.UpdateEx(serverData.ServerID, AppId, validate, custom: custom, loginAnonymous: loginAnonymous);
 
             Error = error;
@@ -150,7 +150,7 @@ namespace WindowsGSM.Plugins
             });
         }
 
-        private void UpdateMods()
+        private async Task UpdateMods()
         {
             if (File.Exists(Functions.ServerPath.GetServersServerFiles(serverData.ServerID, ModListFile)))
             {
@@ -169,7 +169,7 @@ namespace WindowsGSM.Plugins
                         mods.Add(new ModInfo { AppId = elements[elements.Length - 3], ModId = elements[elements.Length - 2], FileName = elements[elements.Length - 1] });
                     }
                 }
-                DownloadMods(mods);
+                await DownloadMods(mods);
                 var modlistContent = new StringBuilder();
                 foreach (ModInfo mod in mods)
                 {
@@ -197,7 +197,7 @@ namespace WindowsGSM.Plugins
             }
         }
 
-        private void DownloadMods(List<ModInfo> mods)
+        private async Task DownloadMods(List<ModInfo> mods)
         {
             string _exeFile = "steamcmd.exe";
             string _installPath = ServerPath.GetBin("steamcmd");
