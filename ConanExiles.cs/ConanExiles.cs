@@ -19,7 +19,7 @@ namespace WindowsGSM.Plugins
             name = "WindowsGSM.ConanExiles", // WindowsGSM.XXXX
             author = "Soul", //moddownload by raziel7893
             description = "\U0001f9e9 A plugin version of the Conan Exiles Dedicated server for WindowsGSM",
-            version = "1.3",
+            version = "1.3.1",
             url = "https://github.com/Soulflare3/WindowsGSM.ConanExiles", // Github repository link (Best practice)
             color = "#7a0101" // Color Hex
         };
@@ -173,12 +173,12 @@ namespace WindowsGSM.Plugins
                         continue;
                     }
                     //clear doubleSlashes
-                    tmpLine = line.Replace("//", "/");
+                    tmpLine = tmpLine.Replace("//", "/");
 
                     var elements = tmpLine.Split('/');
                     if (elements.Length > 3)
                     {
-
+                        mods.Add(new ModInfo { AppId = elements[elements.Length - 3], ModId = elements[elements.Length - 2], FileName = elements[elements.Length - 1] });
                     }
                 }
                 await DownloadMods(mods);
@@ -274,7 +274,9 @@ namespace WindowsGSM.Plugins
         {
             using (Stream source = File.Open(sourcePath, FileMode.Open))
             {
-                using (Stream destination = File.Create(destinationPath))
+                if (File.Exists(destinationPath))
+                    File.Delete(destinationPath);
+                using (Stream destination = File.Create(destinationPath, 4096, FileOptions.Asynchronous))
                 {
                     await source.CopyToAsync(destination);
                 }
