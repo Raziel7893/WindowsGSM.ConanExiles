@@ -125,15 +125,6 @@ namespace WindowsGSM.Plugins
             return p;
         }
 
-        public new async Task<Process> Update(bool validate = false, string custom = null)
-        {
-            await UpdateMods();
-            var (p, error) = await Installer.SteamCMD.UpdateEx(serverData.ServerID, AppId, validate, custom: custom, loginAnonymous: loginAnonymous);
-
-            Error = error;
-            return p;
-        }
-
         public async Task Stop(Process p)
         {
             await Task.Run(() =>
@@ -148,6 +139,15 @@ namespace WindowsGSM.Plugins
                     Functions.ServerConsole.SendWaitToMainWindow("^c");
                 }
             });
+        }
+
+        public new async Task<Process> Update(bool validate = false, string custom = null)
+        {
+            await UpdateMods();
+            var (p, error) = await Installer.SteamCMD.UpdateEx(serverData.ServerID, AppId, validate, custom: custom, loginAnonymous: loginAnonymous);
+
+            Error = error;
+            return p;
         }
 
         private async Task UpdateMods()
