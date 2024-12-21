@@ -168,7 +168,7 @@ namespace WindowsGSM.Plugins
                     {
                         if (tmpLine.Contains('*'))
                         {
-                            mods.Add(new ModInfo { AppId = string.Empty, ModId = string.Empty, FileName = tmpLine.Replace("*", string.Empty) });
+                            mods.Add(new ModInfo { AppId = string.Empty, ModId = string.Empty, FileName = tmpLine });
                         }
                         continue;
                     }
@@ -178,14 +178,24 @@ namespace WindowsGSM.Plugins
                     var elements = tmpLine.Split('/');
                     if (elements.Length > 3)
                     {
-                        mods.Add(new ModInfo { AppId = elements[elements.Length - 3], ModId = elements[elements.Length - 2], FileName = elements[elements.Length - 1] });
+                        long tmp = 0;
+                        // check if the ids are relly valid
+                        if (Int64.TryParse(elements[elements.Length - 3], out tmp) && Int64.TryParse(elements[elements.Length - 2], out tmp))
+                        {
+                            mods.Add(new ModInfo { AppId = elements[elements.Length - 3], ModId = elements[elements.Length - 2], FileName = $"*{elements[elements.Length - 1]}" });
+                            continue;
+                        }
                     }
+
+                    //just keep the line as is, just ignored by the downloader
+                    mods.Add(new ModInfo { AppId = string.Empty, ModId = string.Empty, FileName = tmpLine });
                 }
+
                 await DownloadMods(mods);
                 var modlistContent = new StringBuilder();
                 foreach (ModInfo mod in mods)
                 {
-                    modlistContent.AppendLine($"*{mod.FileName}");
+                    modlistContent.AppendLine($"{mod.FileName}");
                 }
 
                 await CopyModPaksAsync(modDestFolder);
