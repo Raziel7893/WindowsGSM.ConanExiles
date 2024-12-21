@@ -7,6 +7,7 @@ using WindowsGSM.GameServer.Engine;
 using WindowsGSM.GameServer.Query;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace WindowsGSM.Plugins
 {
@@ -163,10 +164,21 @@ namespace WindowsGSM.Plugins
                 foreach (string line in lines)
                 {
                     string tmpLine = line.Replace("\\", "/");
+                    if (!tmpLine.Contains('/'))
+                    {
+                        if (tmpLine.Contains('*'))
+                        {
+                            mods.Add(new ModInfo { AppId = string.Empty, ModId = string.Empty, FileName = tmpLine.Replace("*", string.Empty) });
+                        }
+                        continue;
+                    }
+                    //clear doubleSlashes
+                    tmpLine = line.Replace("//", "/");
+
                     var elements = tmpLine.Split('/');
                     if (elements.Length > 3)
                     {
-                        mods.Add(new ModInfo { AppId = elements[elements.Length - 3], ModId = elements[elements.Length - 2], FileName = elements[elements.Length - 1] });
+
                     }
                 }
                 await DownloadMods(mods);
@@ -213,6 +225,7 @@ namespace WindowsGSM.Plugins
             StringBuilder sb = new StringBuilder($"+force_install_dir \"{Functions.ServerPath.GetServersServerFiles(serverData.ServerID)}\" +login anonymous");
             foreach (var mod in mods)
             {
+                //skipp nonsteam entries
                 if (!string.IsNullOrEmpty(mod.AppId) && !string.IsNullOrEmpty(mod.ModId) && !string.IsNullOrEmpty(mod.FileName))
                     sb.Append($" +workshop_download_item {mod.AppId} {mod.ModId}");
             }
