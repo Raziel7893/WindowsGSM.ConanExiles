@@ -214,7 +214,9 @@ namespace WindowsGSM.Plugins
             {
                 string dest = Path.Combine(destination, Path.GetFileName(file));
                 //only copy if changed
-                if (new FileInfo(file).CreationTimeUtc > new FileInfo(dest).CreationTimeUtc)
+                if (!File.Exists(dest) ||
+                    new FileInfo(file).Length != new FileInfo(dest).Length ||
+                    new FileInfo(file).CreationTimeUtc > new FileInfo(dest).CreationTimeUtc)
                     await CopyFileAsync(file, dest);
             }
         }
