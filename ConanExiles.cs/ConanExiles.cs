@@ -147,6 +147,7 @@ namespace WindowsGSM.Plugins
             await UpdateMods();
             var (p, error) = await Installer.SteamCMD.UpdateEx(serverData.ServerID, AppId, validate, custom: custom, loginAnonymous: loginAnonymous);
 
+            await Task.Run(() => { p.WaitForExit(); });
             Error = error;
             return p;
         }
