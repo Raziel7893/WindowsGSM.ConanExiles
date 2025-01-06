@@ -19,7 +19,7 @@ namespace WindowsGSM.Plugins
             name = "WindowsGSM.ConanExiles", // WindowsGSM.XXXX
             author = "Raziel7893", //moddownload by raziel7893
             description = "\U0001f9e9 A plugin version of the Conan Exiles Dedicated server for WindowsGSM",
-            version = "1.3.2",
+            version = "1.3.3",
             url = "https://github.com/Raziel7893/WindowsGSM.ConanExiles", // Github repository link (Best practice)
             color = "#7a0101" // Color Hex
         };
