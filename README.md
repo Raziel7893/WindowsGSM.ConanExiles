@@ -26,6 +26,14 @@
 1. Move **ConanExiles.cs** folder to **plugins** folder or import the zip from the plugins tab
 1. Click the **[RELOAD PLUGINS]** button or restart WindowsGSM
 
+## Portforwardings:
+You need this to connect from anywhere outside your local home
+If You don't know How: https://portforward.com/router.htm , search the list for your router and you should get an howto
+- 7777 UDP (gameport)
+- 7778 UDP (should be GamePort +1 if changed)
+- 27016 UDP OR TCP( QueryPort, not sure about the protocol there, should be udp)
+
+
 ### Files To Backup
 - Save Gane
   - WindowsGSM\servers\%ID%\serverfiles\ConanSandbox\Saved
