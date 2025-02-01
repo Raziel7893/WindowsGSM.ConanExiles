@@ -63,5 +63,13 @@ Many windowsgsm plugin creators recommend zerotier (should be a free VPN designa
 ### Support
 [WGSM](https://discord.com/channels/590590698907107340/645730252672335893)
 
+### Give Love!
+[Buy me a coffee](https://ko-fi.com/raziel7893)
+
+[Paypal](https://paypal.me/raziel7893)
+
+### License
+This project is licensed under the MIT License - see the <a href="https://github.com/raziel7893/WindowsGSM.Smalland/blob/main/LICENSE">LICENSE.md</a> file for details
+
 ### License
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/Soulflare3/WindowsGSM.ConanExiles/blob/master/LICENSE) file for details
