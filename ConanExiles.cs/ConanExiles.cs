@@ -28,7 +28,7 @@ namespace WindowsGSM.Plugins
         public ConanExiles(ServerConfig serverData) : base(serverData) => base.serverData = serverData;
         // - Settings properties for SteamCMD installer
         public override bool loginAnonymous => true;
-        public override string AppId => "443030";
+        public override string AppId => "443030 -beta public"; //change to -beta conan-exiles-legacy
         public string GameId => "440900";
         public string ModListFile => "ModList.txt";
 
