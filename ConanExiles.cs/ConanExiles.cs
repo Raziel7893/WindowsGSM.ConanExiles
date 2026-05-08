@@ -28,7 +28,7 @@ namespace WindowsGSM.Plugins
         public ConanExiles(ServerConfig serverData) : base(serverData) => base.serverData = serverData;
         // - Settings properties for SteamCMD installer
         public override bool loginAnonymous => true;
-        public override string AppId => "443030 -beta public"; //change to -beta conan-exiles-legacy
+        public override string AppId => "443030 -beta public"; //for legacy: change to -beta conan-exiles-legacy
         public string GameId => "440900";
         public string ModListFile => "ModList.txt";
 
@@ -43,7 +43,7 @@ namespace WindowsGSM.Plugins
         public string Port = "7777";
         public string ServerName = "Conan Exiles Dedicated Server";
         public string QueryPort = "27015";
-        public string Defaultmap = "game.db";
+        public string Defaultmap = "Dedicated";    //for legacy : "game.db"
         public string Maxplayers = "40";
         public string Additional = "";
 
