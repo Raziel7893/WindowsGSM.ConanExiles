@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Text;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using WindowsGSM.Functions;
 using WindowsGSM.GameServer.Engine;
 using WindowsGSM.GameServer.Query;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace WindowsGSM.Plugins
 {
@@ -126,18 +127,14 @@ namespace WindowsGSM.Plugins
             return p;
         }
 
+        // - Stop server function
         public async Task Stop(Process p)
         {
             await Task.Run(() =>
             {
-                if (p.StartInfo.CreateNoWindow)
+                if (!SendStopSignal(p))
                 {
-                    p.CloseMainWindow();
-                }
-                else
-                {
-                    Functions.ServerConsole.SetMainWindow(p.MainWindowHandle);
-                    Functions.ServerConsole.SendWaitToMainWindow("^c");
+                    p.Kill();
                 }
             });
         }
@@ -294,6 +291,42 @@ namespace WindowsGSM.Plugins
                     await source.CopyToAsync(destination);
                 }
             }
+        }
+
+        #region preparation of the WindowsAPI to send process shutdown signals
+        internal const int CTRL_C_EVENT = 0;
+        [DllImport("kernel32.dll")]
+        internal static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern bool AttachConsole(uint dwProcessId);
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        internal static extern bool FreeConsole();
+        [DllImport("kernel32.dll")]
+        static extern bool SetConsoleCtrlHandler(ConsoleCtrlDelegate HandlerRoutine, bool Add);
+        delegate Boolean ConsoleCtrlDelegate(uint CtrlType);
+        #endregion
+        //sends the stop signal to the process
+        public static bool SendStopSignal(Process p)
+        {
+            if (AttachConsole((uint)p.Id))
+            {
+                SetConsoleCtrlHandler(null, true);
+                try
+                {
+                    if (!GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0))
+                    {
+                        return false;
+                    }
+                    p.WaitForExit(10000);
+                }
+                finally
+                {
+                    SetConsoleCtrlHandler(null, false);
+                    FreeConsole();
+                }
+                return true;
+            }
+            return false;
         }
 
     }
