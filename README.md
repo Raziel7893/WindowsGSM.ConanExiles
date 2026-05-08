@@ -4,6 +4,9 @@
 
 🧩 A plugin version of the Conan Exiles Dedicated server for WindowsGSM
 
+## legacy conan
+To use the legacy version, open your plugins/ConanExiles.cs/ConanExiles.cs at line 31 and replace the "-beta public" with "-beta conan-exiles-legacy"
+
 ## Mod AutoUpdate (only steammods possible)
 - Just copy your ModList.txt to the ServerFiles root (click Browse => serverfiles) and click update.
 - WGSM will try to load all the mods from steam and copy them into the Mods folder.
