@@ -9,8 +9,8 @@ To use the legacy version https://github.com/Raziel7893/WindowsGSM.ConanExilesLe
 - If you get issues with outdated versions:
   - Got to ConanSandbox\Saved\Config\WindowsServer\Engine
   - Delete the lines:
-  -  bUseBuildIdOverride=True
-  -  BuildIdOverride=XXXXXXX
+  * bUseBuildIdOverride=True
+  * BuildIdOverride=XXXXXXX
 
 ## Mod AutoUpdate (only steammods possible)
 - Just copy your ModList.txt to the ServerFiles root (click Browse => serverfiles) and click update.
