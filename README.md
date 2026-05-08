@@ -4,8 +4,11 @@
 
 🧩 A plugin version of the Conan Exiles Dedicated server for WindowsGSM
 
-## legacy conan
-To use the legacy version, open your plugins/ConanExiles.cs/ConanExiles.cs at line 31 and replace the "-beta public" with "-beta conan-exiles-legacy"
+## Notes
+To use the legacy version
+- open your plugins/ConanExiles.cs/ConanExiles.cs at line 31 and replace the "-beta public" with "-beta conan-exiles-legacy"
+- You also need to change the Servermap to "game.db" 
+To use enhanced for old plugins: change the Server Map (click Edit Config Button) to Dedicated instead of game.db 
 
 ## Mod AutoUpdate (only steammods possible)
 - Just copy your ModList.txt to the ServerFiles root (click Browse => serverfiles) and click update.
