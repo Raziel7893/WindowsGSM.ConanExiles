@@ -7,7 +7,7 @@
 ## Notes
 To use the legacy version https://github.com/Raziel7893/WindowsGSM.ConanExilesLegacy
 - If you get issues with outdated versions:
-  - Got to ConanSandbox\Saved\Config\WindowsServer\Engine
+  - Go to ConanSandbox\Saved\Config\WindowsServer\Engine
   - Delete the lines:
   * bUseBuildIdOverride=True
   * BuildIdOverride=XXXXXXX
