@@ -78,8 +78,8 @@ namespace WindowsGSM.Plugins
                 return null;
             }
 
-            string param = string.IsNullOrWhiteSpace(serverData.ServerIP) ? string.Empty : $" -MultiHome={serverData.ServerIP}";
-            param += string.IsNullOrWhiteSpace(serverData.ServerPort) ? string.Empty : $" -Port={serverData.ServerPort}";
+            // string param = string.IsNullOrWhiteSpace(serverData.ServerIP) ? string.Empty : $" -MultiHome={serverData.ServerIP}";
+            string param = string.IsNullOrWhiteSpace(serverData.ServerPort) ? string.Empty : $" -Port={serverData.ServerPort}";
             param += string.IsNullOrWhiteSpace(serverData.ServerQueryPort) ? string.Empty : $" -QueryPort={serverData.ServerQueryPort}";
             param += string.IsNullOrWhiteSpace(serverData.ServerMaxPlayer) ? string.Empty : $" -MaxPlayers={serverData.ServerMaxPlayer}";
             param += $" {serverData.ServerParam}" + (serverData.EmbedConsole ? " -log" : string.Empty);
