@@ -263,7 +263,7 @@ namespace WindowsGSM.Plugins
             await RunProcessAsync(p);
         }
 
-        static Task<int> RunProcessAsync(Process p)
+        Task<int> RunProcessAsync(Process p)
         {
             var tcs = new TaskCompletionSource<int>();
 
@@ -274,8 +274,13 @@ namespace WindowsGSM.Plugins
                 tcs.SetResult(p.ExitCode);
                 p.Dispose();
             };
-
+            
+            var serverConsole = new ServerConsole(serverData.ServerID);
+            p.OutputDataReceived += serverConsole.AddOutput;
+            p.ErrorDataReceived += serverConsole.AddOutput;
             p.Start();
+            p.BeginOutputReadLine();
+            p.BeginErrorReadLine();
 
             return tcs.Task;
         }
